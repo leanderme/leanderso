@@ -2,12 +2,12 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { site } from './site.mjs';
 
 const escape = (value) => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
-const external = ({ name, url }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer">${escape(name)}<span class="arrow" aria-hidden="true">↗</span></a>`;
+const external = ({ name, url }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer">${escape(name)}</a>`;
 const list = (links) => `<ul class="link-list">${links.map(link => `<li>${external(link)}</li>`).join('')}</ul>`;
 const address = `<address>${escape(site.name)}<br>${site.address.map(escape).join('<br>')}</address>`;
 const contact = `${site.email ? `<p>E-Mail: <a href="mailto:${escape(site.email)}">${escape(site.email)}</a></p>` : '<p>E-Mail: vor Veröffentlichung zu ergänzen.</p>'}${site.phone ? `<p>Telefon: <a href="tel:${escape(site.phone)}">${escape(site.phone)}</a></p>` : ''}`;
-const footer = `<footer class="footer"><span>© ${new Date().getUTCFullYear()} ${escape(site.name)}</span><nav aria-label="Rechtliches" lang="de"><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a></nav></footer>`;
-const masthead = (home) => `<header class="masthead"><a class="wordmark" href="/" aria-label="Leander Melms — Home"><span class="mark" aria-hidden="true"></span>leander.so</a>${home ? `<span class="location">${escape(site.city)}</span>` : '<a class="back" href="/">← Startseite</a>'}</header>`;
+const footer = `<footer class="footer"><nav aria-label="Rechtliches" lang="de"><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a></nav></footer>`;
+const masthead = `<header class="masthead"><a href="/">${escape(site.name)}</a><a class="back" href="/">← Startseite</a></header>`;
 
 function document({ title, description, path, body, lang = 'de', home = false }) {
   return `<!doctype html>
@@ -17,7 +17,7 @@ function document({ title, description, path, body, lang = 'de', home = false })
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escape(title)}</title>
   <meta name="description" content="${escape(description)}">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#f9f9f7">
   <meta name="referrer" content="no-referrer">
   <link rel="canonical" href="${escape(site.url + path)}">
   <meta property="og:type" content="website">
@@ -31,7 +31,7 @@ function document({ title, description, path, body, lang = 'de', home = false })
 <body>
   <a class="skip" href="#main">${home ? 'Skip to content' : 'Zum Inhalt'}</a>
   <div class="page ${home ? 'home' : 'legal'}">
-    ${masthead(home)}
+    ${home ? '' : masthead}
     <main id="main">${body}</main>
     ${footer}
   </div>
@@ -44,7 +44,7 @@ const pages = [
     file: 'index.html', path: '/', lang: 'en', home: true,
     title: 'Leander Melms',
     description: 'Leander Melms. Hamburg, Germany. Theodor.ai, Tonihealth.de, and elsewhere on the internet.',
-    body: `<div class="intro"><h1>Leander Melms<span aria-hidden="true">.</span></h1></div>
+    body: `<header class="intro"><h1>${escape(site.name)}</h1><p class="location">${escape(site.city)}</p></header>
       <section class="index-section" aria-labelledby="companies"><h2 class="section-label" id="companies">Companies</h2>${list(site.companies)}</section>
       <section class="index-section socials" aria-labelledby="elsewhere"><h2 class="section-label" id="elsewhere">Elsewhere</h2>${list(site.socials)}</section>`,
   },
