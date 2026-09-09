@@ -2,7 +2,7 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { site } from './site.mjs';
 
 const escape = (value) => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
-const external = ({ name, url }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer">${escape(name)}</a>`;
+const external = ({ name, url }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer"><span>${escape(name)}</span><span class="link-arrow" aria-hidden="true">↗</span></a>`;
 const list = (links) => `<ul class="link-list">${links.map(link => `<li>${external(link)}</li>`).join('')}</ul>`;
 const address = `<address>${escape(site.name)}<br>${site.address.map(escape).join('<br>')}</address>`;
 const contact = `${site.email ? `<p>E-Mail: <a href="mailto:${escape(site.email)}">${escape(site.email)}</a></p>` : '<p>E-Mail: vor Veröffentlichung zu ergänzen.</p>'}${site.phone ? `<p>Telefon: <a href="tel:${escape(site.phone)}">${escape(site.phone)}</a></p>` : ''}`;
@@ -17,7 +17,7 @@ function document({ title, description, path, body, lang = 'de', home = false })
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escape(title)}</title>
   <meta name="description" content="${escape(description)}">
-  <meta name="theme-color" content="#f9f9f7">
+  <meta name="theme-color" content="#f6f3ed">
   <meta name="referrer" content="no-referrer">
   <link rel="canonical" href="${escape(site.url + path)}">
   <meta property="og:type" content="website">
@@ -26,6 +26,7 @@ function document({ title, description, path, body, lang = 'de', home = false })
   <meta property="og:url" content="${escape(site.url + path)}">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -44,9 +45,9 @@ const pages = [
     file: 'index.html', path: '/', lang: 'en', home: true,
     title: 'Leander Melms',
     description: 'Leander Melms. Hamburg, Germany. Theodor.ai, Tonihealth.de, and elsewhere on the internet.',
-    body: `<header class="intro"><h1>${escape(site.name)}</h1><p class="location">${escape(site.city)}</p></header>
-      <section class="index-section" aria-labelledby="companies"><h2 class="section-label" id="companies">Companies</h2>${list(site.companies)}</section>
-      <section class="index-section socials" aria-labelledby="elsewhere"><h2 class="section-label" id="elsewhere">Elsewhere</h2>${list(site.socials)}</section>`,
+    body: `<header class="intro"><p class="location">${escape(site.city)}</p><h1>${escape(site.name)}</h1><p class="introduction">${escape(site.introduction)}</p></header>
+      <div class="directory"><section class="index-section companies" aria-labelledby="companies"><h2 class="section-label" id="companies">Companies</h2>${list(site.companies)}</section>
+      <section class="index-section socials" aria-labelledby="elsewhere"><h2 class="section-label" id="elsewhere">Elsewhere</h2>${list(site.socials)}</section></div>`,
   },
   {
     file: 'impressum/index.html', path: '/impressum/',

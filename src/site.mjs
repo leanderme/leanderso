@@ -2,6 +2,7 @@ export const site = {
   name: 'Leander Melms',
   url: 'https://leander.so',
   city: 'Hamburg, Germany',
+  introduction: 'Building for a healthier future.',
   email: 'leander.melms@gmx.de',
   phone: '',
   address: ['Felix-Dahn-Straße 4', '20357 Hamburg', 'Deutschland'],
