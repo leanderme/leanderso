@@ -50,7 +50,7 @@ h1 { margin: 0; font-family: var(--serif); font-size: clamp(3.25rem, 8vw, 5.25re
 .socials .index-link { font-size: .875rem; gap: .4rem; }
 .socials .link-label { gap: .45rem; }
 .socials .brand-icon { width: 1rem; height: 1rem; }
-.socials .link-arrow { font-size: .75rem; }
+.socials .link-arrow { display: none; }
 .footer { margin-top: 4rem; color: var(--muted); font-size: .75rem; line-height: 1.5; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
 .footer a { display: inline-flex; align-items: center; min-height: 2rem; }
