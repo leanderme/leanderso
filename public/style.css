@@ -40,12 +40,16 @@ h1 { margin: 0; font-family: var(--serif); font-size: clamp(3.25rem, 8vw, 5.25re
 .section-label { margin: 0; color: var(--muted); font-size: .75rem; font-weight: 400; line-height: 2.75rem; }
 .link-list { list-style: none; padding: 0; margin: 0; }
 .index-link { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 2.75rem; font-size: 1.125rem; letter-spacing: -.025em; line-height: 1.5; }
+.link-label { display: inline-flex; align-items: center; gap: .75rem; }
+.brand-icon { display: block; width: 1.125rem; height: 1.125rem; flex: none; object-fit: contain; }
 .link-arrow { color: var(--muted); font-size: 1rem; font-weight: 400; transition: transform 160ms ease, color 160ms ease; }
 .index-link:hover { text-decoration: none; }
-.index-link:hover > span:first-child { text-decoration: underline; }
+.index-link:hover .link-name { text-decoration: underline; }
 .index-link:hover .link-arrow { color: var(--ink); transform: translate(2px, -2px); }
-.socials .link-list { display: flex; flex-wrap: wrap; column-gap: 1.5rem; }
+.socials .link-list { display: flex; flex-wrap: wrap; column-gap: 1.25rem; }
 .socials .index-link { font-size: .875rem; gap: .4rem; }
+.socials .link-label { gap: .45rem; }
+.socials .brand-icon { width: 1rem; height: 1rem; }
 .socials .link-arrow { font-size: .75rem; }
 .footer { margin-top: 4rem; color: var(--muted); font-size: .75rem; line-height: 1.5; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
@@ -73,7 +77,7 @@ h1 { margin: 0; font-family: var(--serif); font-size: clamp(3.25rem, 8vw, 5.25re
   .index-section { grid-template-columns: 1fr; row-gap: .5rem; }
   .section-label { line-height: 1.5; }
   .index-section + .index-section { margin-top: 2rem; }
-  .socials .link-list { column-gap: 1.75rem; }
+  .socials .link-list { column-gap: 1.25rem; }
   .footer { margin-top: 3rem; }
   .legal { padding-block: 2.5rem; }
   .masthead { margin-bottom: 3rem; }

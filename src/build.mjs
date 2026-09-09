@@ -2,7 +2,7 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { site } from './site.mjs';
 
 const escape = (value) => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
-const external = ({ name, url }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer"><span>${escape(name)}</span><span class="link-arrow" aria-hidden="true">↗</span></a>`;
+const external = ({ name, url, icon }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer"><span class="link-label">${icon ? `<img class="brand-icon" src="${escape(icon)}" width="20" height="20" alt="">` : ''}<span class="link-name">${escape(name)}</span></span><span class="link-arrow" aria-hidden="true">↗</span></a>`;
 const list = (links) => `<ul class="link-list">${links.map(link => `<li>${external(link)}</li>`).join('')}</ul>`;
 const address = `<address>${escape(site.name)}<br>${site.address.map(escape).join('<br>')}</address>`;
 const contact = `${site.email ? `<p>E-Mail: <a href="mailto:${escape(site.email)}">${escape(site.email)}</a></p>` : '<p>E-Mail: vor Veröffentlichung zu ergänzen.</p>'}${site.phone ? `<p>Telefon: <a href="tel:${escape(site.phone)}">${escape(site.phone)}</a></p>` : ''}`;
@@ -107,4 +107,4 @@ for (const page of pages) {
 }
 await writeFile('dist/robots.txt', `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
 await writeFile('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.filter(page => page.file !== '404.html').map(page => `<url><loc>${escape(site.url + page.path)}</loc></url>`).join('')}</urlset>`);
-console.log(`Built ${pages.length} static pages. No client-side JavaScript or third-party assets.`);
+console.log(`Built ${pages.length} static pages. No client-side JavaScript or third-party requests.`);

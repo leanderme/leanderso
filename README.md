@@ -18,6 +18,7 @@ Open http://127.0.0.1:4173. Run `npm run build` after an edit to refresh the sta
 - `src/build.mjs`: shared HTML layout, page copy, metadata, and static build.
 - `public/style.css`: responsive layout, typography, colors, focus and hover states.
 - `public/fonts/`: self-hosted Newsreader font and its SIL Open Font License.
+- `public/icons/`: original company and social favicons, served locally beside their links.
 - `docs/legal-review.md`: legal sources, reasoning, and remaining limitations.
 
 ## Deployment
