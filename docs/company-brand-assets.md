@@ -1,10 +1,10 @@
-# Company favicons
+# Company brand icons
 
-Retrieved on 9 September 2026 from the icon links in the companies' official page HTML. Original files are served locally to avoid third-party requests when the landing page loads.
+Supplied directly by Leander on 10 September 2026 to replace the generic blue favicons previously published by the company websites. The original PNG files are served locally and sized proportionally in CSS.
 
-| Local file | Original source |
+| Local file | Brand mark |
 | --- | --- |
-| `public/icons/theodor.png` | https://theodor.ai/favicon-default-64x64.png |
-| `public/icons/tonihealth.png` | https://tonihealth.de/favicon-default-64x64.png |
+| `public/icons/theodor-heart.png` | Supplied red heart — Theodor.ai |
+| `public/icons/tonihealth-heart.png` | Supplied green heart in a circle — Toni Health |
 
-Both sites currently publish the same blue brand symbol. These assets identify links to the corresponding companies; the original marks have not been redrawn or recolored.
+The supplied artwork and colors are preserved. These assets identify links to the corresponding companies and make no third-party requests when the page loads.
