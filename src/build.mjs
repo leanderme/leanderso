@@ -17,7 +17,8 @@ function document({ title, description, path, body, lang = 'de', home = false })
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escape(title)}</title>
   <meta name="description" content="${escape(description)}">
-  <meta name="theme-color" content="#f6f3ed">
+  <meta name="theme-color" content="#f6f3ed" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b201d" media="(prefers-color-scheme: dark)">
   <meta name="referrer" content="no-referrer">
   <link rel="canonical" href="${escape(site.url + path)}">
   <meta property="og:type" content="website">
