@@ -13,7 +13,7 @@ struct ContentView: View {
             Section {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Health Push").font(.system(.largeTitle, design: .serif))
-                    Text("Sends yesterday's Apple Health summary to leander.so every morning after \(Sender.sendAfterHour):00.")
+                    Text("Sends your daily Apple Health summaries for the last \(Sender.daysToSend) days to leander.so every morning after \(Sender.sendAfterHour):00.")
                         .foregroundStyle(.secondary)
                 }
                 .listRowBackground(Color.clear)
@@ -24,10 +24,17 @@ struct ContentView: View {
                 if let summary = sender.lastSummary {
                     row("Day", summary.date)
                     if let steps = summary.steps { row("Steps", steps.formatted()) }
+                    if let distance = summary.distanceMeters { row("Distance", (Double(distance) / 1000).formatted(.number.precision(.fractionLength(1))) + " km") }
+                    if let energy = summary.activeEnergy { row("Active energy", "\(energy.formatted()) kcal") }
+                    if let exercise = summary.exerciseMinutes { row("Active minutes", exercise.formatted()) }
+                    if let workouts = summary.workouts { row("Workouts", workouts.formatted()) }
+                    ForEach((summary.workoutMinutes ?? [:]).sorted { $0.value > $1.value }, id: \.key) { type, minutes in
+                        row("  \(type.capitalized)", "\(minutes) min")
+                    }
                     if let sleep = summary.sleepMinutes { row("Sleep", "\(sleep / 60) h \(sleep % 60) min") }
                     if let resting = summary.restingHeartRate { row("Resting heart rate", "\(resting) bpm") }
-                    if let workouts = summary.workouts { row("Workouts", workouts.formatted()) }
-                    if let exercise = summary.exerciseMinutes { row("Active minutes", exercise.formatted()) }
+                    if let hrv = summary.hrv { row("Heart rate variability", "\(hrv) ms") }
+                    if let vo2 = summary.vo2Max { row("VO₂ max", vo2.formatted()) }
                 } else {
                     Text("Nothing sent yet").foregroundStyle(.secondary)
                 }
@@ -35,7 +42,7 @@ struct ContentView: View {
                     Text(status).foregroundStyle(.red)
                 }
             } header: {
-                Text("Last sent")
+                Text("Last sent, most recent day")
             } footer: {
                 if let sentAt = sender.lastSentAt { Text("Sent \(sentAt.formatted(date: .abbreviated, time: .shortened)).") }
             }
@@ -56,7 +63,7 @@ struct ContentView: View {
             } header: {
                 Text("Apple Health")
             } footer: {
-                Text("Reads steps, sleep, resting heart rate, exercise minutes and workouts. Change this later in Settings → Health → Data Access & Devices.")
+                Text("Reads steps, distance, active energy, exercise minutes, workouts, sleep, resting heart rate, heart rate variability and VO₂ max. Turn all of them on; iOS doesn't tell the app which ones you left off. Change this later in Settings → Health → Data Access & Devices.")
             }
 
             Section {
@@ -88,13 +95,13 @@ struct ContentView: View {
                     Task { await sender.send() }
                 } label: {
                     HStack {
-                        Text("Send yesterday's summary now")
+                        Text("Send the last \(Sender.daysToSend) days now")
                         if sender.isSending { Spacer(); ProgressView() }
                     }
                 }
                 .disabled(sender.isSending || !hasToken || !healthRequested)
             } footer: {
-                Text("Sending the same day again replaces its figures on the site.")
+                Text("Days already on the site are replaced with the current figures from Apple Health.")
             }
 
             #if DEBUG

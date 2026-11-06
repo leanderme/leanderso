@@ -185,7 +185,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Health Push";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Health Push reads yesterday's steps, sleep, resting heart rate and workouts to publish a daily summary on leander.so.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Health Push reads daily totals for activity, workouts, sleep, heart rate and fitness to publish a summary on leander.so.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Debug builds can add sample data to test the summary.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -215,7 +215,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Health Push";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Health Push reads yesterday's steps, sleep, resting heart rate and workouts to publish a daily summary on leander.so.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Health Push reads daily totals for activity, workouts, sleep, heart rate and fitness to publish a summary on leander.so.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Debug builds can add sample data to test the summary.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

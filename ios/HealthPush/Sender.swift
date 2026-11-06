@@ -2,12 +2,14 @@ import BackgroundTasks
 import Foundation
 import HealthKit
 
-/// Sends yesterday's summary to the website repository once a day, after `sendAfterHour`, as a GitHub repository_dispatch event.
+/// Sends the last `daysToSend` days to the website repository once a day, after `sendAfterHour`, as a GitHub repository_dispatch event.
+/// Resending earlier days fills gaps and picks up data the Watch synced late; unchanged days produce no commit.
 @MainActor
 final class Sender: ObservableObject {
     static let shared = Sender()
     nonisolated static let refreshTask = "so.leander.healthpush.refresh"
     nonisolated static let sendAfterHour = 9
+    nonisolated static let daysToSend = 30
 
     @Published private(set) var lastSummary: DailySummary?
     @Published private(set) var lastSentAt: Date?
@@ -45,15 +47,15 @@ final class Sender: ObservableObject {
         defer { isSending = false }
         do {
             guard let token = Keychain.token else { throw Failure("Add a GitHub token first.") }
-            let summary = try await HealthReader.shared.summary(for: yesterday)
-            guard !summary.isEmpty else { throw Failure("Apple Health has no figures for \(summary.date) yet.") }
+            let days = try await HealthReader.shared.summaries(days: Self.daysToSend).filter { !$0.isEmpty }
+            guard let summary = days.last else { throw Failure("Apple Health has no figures for the last \(Self.daysToSend) days.") }
 
             var request = URLRequest(url: Self.dispatchURL)
             request.httpMethod = "POST"
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
             request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
-            request.httpBody = try JSONEncoder().encode(Dispatch(client_payload: summary))
+            request.httpBody = try JSONEncoder().encode(Dispatch(client_payload: Batch(days: days)))
             let (data, response) = try await URLSession.shared.data(for: request)
             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
             guard code == 204 else {
@@ -64,7 +66,7 @@ final class Sender: ObservableObject {
             lastSummary = summary
             lastSentAt = .now
             status = nil
-            defaults.set(summary.date, forKey: "sentDay")
+            defaults.set(HealthReader.dayFormatter.string(from: yesterday), forKey: "sentDay")
             defaults.set(lastSentAt, forKey: "lastSentAt")
             defaults.set(try JSONEncoder().encode(summary), forKey: "lastSummary")
         } catch HKError.errorDatabaseInaccessible {
@@ -105,8 +107,10 @@ final class Sender: ObservableObject {
 
 private struct Dispatch: Encodable {
     let event_type = "health"
-    let client_payload: DailySummary
+    let client_payload: Batch
 }
+
+private struct Batch: Encodable { let days: [DailySummary] }
 
 private struct GitHubError: Decodable { let message: String }
 

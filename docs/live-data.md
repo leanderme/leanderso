@@ -21,9 +21,9 @@ GITHUB_TOKEN=$(gh auth token) node scripts/fetch-github.mjs
 
 ## Apple Health
 
-Apple Health has no web API, so the iPhone sends yesterday's figures once a day. The recommended sender is the Health Push app in `ios/` (see `ios/README.md`): it reads Health directly with deduplicated totals and sends in the background. An iOS Shortcut is described below as a fallback. Either one posts a `repository_dispatch` event, and `scripts/record-health.mjs` checks every value against a plausible range before storing it. Only daily totals are kept, for the last 120 days.
+Apple Health has no web API, so the iPhone sends the figures. The recommended sender is the Health Push app in `ios/` (see `ios/README.md`): each morning it sends daily totals for the last 30 complete days, read with deduplicated HealthKit statistics, and it can send in the background. Resending earlier days fills gaps and picks up data the Watch synced late; days that haven't changed produce no commit. An iOS Shortcut is described below as a fallback. Either one posts a `repository_dispatch` event, and `scripts/record-health.mjs` checks every value against a plausible range before storing it. Only daily totals are kept, for the last 120 days.
 
-The Health section appears once there is data and hides itself when the newest day is more than 10 days old (`site.health.staleAfterDays`), so a broken Shortcut never leaves stale figures on the page.
+The Health section appears once there is data and hides itself when the newest day is more than 10 days old (`site.health.staleAfterDays`), so a broken sender never leaves stale figures on the page. Averages and totals cover the last seven days that have data; with less history, the note under the figures says how many days they cover.
 
 ### Payload
 
@@ -31,17 +31,38 @@ The Health section appears once there is data and hides itself when the newest d
 {
   "event_type": "health",
   "client_payload": {
-    "date": "2026-11-05",
-    "steps": 8432,
-    "sleepMinutes": 431,
-    "restingHeartRate": 54,
-    "exerciseMinutes": 42,
-    "workouts": 1
+    "days": [
+      {
+        "date": "2026-11-05",
+        "steps": 8432,
+        "distanceMeters": 6120,
+        "activeEnergy": 455,
+        "exerciseMinutes": 42,
+        "workouts": 2,
+        "workoutMinutes": { "running": 40, "strength": 35 },
+        "sleepMinutes": 431,
+        "restingHeartRate": 54,
+        "hrv": 48,
+        "vo2Max": 45.2
+      }
+    ]
   }
 }
 ```
 
-`date` is required and must be within the last two weeks. Every other field is optional. Leave out anything the Shortcut could not read, and that figure is skipped. Numbers may arrive as strings, including with a decimal comma.
+A single day without the `days` wrapper is also accepted, which is what the Shortcut sends. Each day needs a `date` within the last 40 days; every other field is optional, and a figure that's missing is skipped. A day that's sent again replaces the stored one. Numbers may arrive as strings, including with a decimal comma. `workoutMinutes` keys are the workout types listed in `workoutNames` in `src/sections.mjs`; anything else should be sent as `other`.
+
+| Field | Unit | Shown on the site |
+| --- | --- | --- |
+| `steps` | count | daily average |
+| `distanceMeters` | m, walking + running | 7-day total in km |
+| `activeEnergy` | kcal | daily average |
+| `exerciseMinutes` | min (Apple exercise ring) | fallback when there are no workouts |
+| `workouts`, `workoutMinutes` | count, min per type | 7-day count, top three types, daily workout minutes as bars |
+| `sleepMinutes` | min asleep, 18:00–12:00 | nightly average |
+| `restingHeartRate` | bpm | daily average |
+| `hrv` | ms, SDNN | daily average |
+| `vo2Max` | ml/kg/min | latest value in the last 30 days |
 
 ### 1. Create a token
 

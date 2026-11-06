@@ -40,27 +40,45 @@ const spark = (values, { floor = 0 } = {}) => {
   return `<svg class="spark" viewBox="0 0 ${values.length * 4 - 1.5} 24" preserveAspectRatio="none" aria-hidden="true">${bars}</svg>`;
 };
 
+// Keys sent by Health Push for HKWorkoutActivityType; anything else arrives as "other".
+const workoutNames = { running: 'Running', walking: 'Walking', hiking: 'Hiking', cycling: 'Cycling', swimming: 'Swimming', rowing: 'Rowing', elliptical: 'Elliptical', strength: 'Strength', core: 'Core', hiit: 'HIIT', yoga: 'Yoga', pilates: 'Pilates', mobility: 'Mobility', tennis: 'Tennis', football: 'Football', other: 'Other' };
+
 export function health(today = new Date().toISOString().slice(0, 10)) {
   const days = readData('health')?.days ?? [];
   const latest = days.at(-1)?.date;
   if (!latest || (Date.parse(today) - Date.parse(latest)) / day > site.health.staleAfterDays) return '';
   const byDate = new Map(days.map(entry => [entry.date, entry]));
   const series = (key, length) => Array.from({ length }, (_, i) => byDate.get(addDays(latest, i - length + 1))?.[key] ?? null);
-  const week = (key) => series(key, 7).filter(value => value != null);
-  const average = (key) => { const values = week(key); return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null; };
-  const sum = (key) => { const values = week(key); return values.length ? values.reduce((a, b) => a + b, 0) : null; };
+  // Averages and totals cover the last seven calendar days that have data, so a short history is never padded with zeros.
+  const week = Array.from({ length: 7 }, (_, i) => byDate.get(addDays(latest, i - 6))).filter(Boolean);
+  const span = week.length === 7 ? 'the last 7 days' : week.length === 1 ? 'one day' : `${week.length} days`;
+  const values = (key) => week.map(entry => entry[key]).filter(value => value != null);
+  const average = (key) => { const list = values(key); return list.length ? list.reduce((a, b) => a + b, 0) / list.length : null; };
+  const sum = (key) => { const list = values(key); return list.length ? list.reduce((a, b) => a + b, 0) : null; };
+  const latestValue = (key) => series(key, 30).filter(value => value != null).at(-1) ?? null;
+  const minutesByType = {};
+  for (const entry of week) for (const [type, minutes] of Object.entries(entry.workoutMinutes ?? {})) minutesByType[type] = (minutesByType[type] ?? 0) + minutes;
+  const types = Object.entries(minutesByType).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([type, minutes]) => `${workoutNames[type] ?? 'Other'} ${number(minutes)} min`).join(', ');
   const sleep = average('sleepMinutes');
+  const workouts = sum('workouts');
+  const workoutBars = Array.from({ length: 30 }, (_, i) => { const entry = byDate.get(addDays(latest, i - 29)); return entry && Object.values(entry.workoutMinutes ?? {}).reduce((a, b) => a + b, 0); });
   const figures = [
     { value: average('steps'), text: number, label: 'steps a day', bars: spark(series('steps', 30)) },
+    { value: sum('distanceMeters'), text: meters => (meters / 1000).toLocaleString('en-US', { maximumFractionDigits: 1 }), label: `km walked and run in ${span}`, bars: spark(series('distanceMeters', 30)) },
+    { value: average('activeEnergy'), text: number, label: 'active kcal a day', bars: spark(series('activeEnergy', 30)) },
+    workouts != null
+      ? { value: workouts, text: number, label: `workout${workouts === 1 ? '' : 's'} in ${span}`, detail: types, bars: spark(workoutBars) }
+      : { value: sum('exerciseMinutes'), text: number, label: `active minutes in ${span}`, bars: spark(series('exerciseMinutes', 30)) },
     { value: sleep, text: () => `${Math.floor(Math.round(sleep) / 60)}:${String(Math.round(sleep) % 60).padStart(2, '0')}`, label: 'hours of sleep a night', bars: spark(series('sleepMinutes', 30)) },
     { value: average('restingHeartRate'), text: number, label: 'bpm resting heart rate', bars: spark(series('restingHeartRate', 30), { floor: 'auto' }) },
-    sum('workouts') != null
-      ? { value: sum('workouts'), text: number, label: `workout${sum('workouts') === 1 ? '' : 's'} this week${sum('exerciseMinutes') ? `, ${number(sum('exerciseMinutes'))} active minutes` : ''}`, bars: spark(series('exerciseMinutes', 30)) }
-      : { value: sum('exerciseMinutes'), text: number, label: 'active minutes this week', bars: spark(series('exerciseMinutes', 30)) },
+    { value: average('hrv'), text: number, label: 'ms heart rate variability', bars: spark(series('hrv', 30), { floor: 'auto' }) },
+    { value: latestValue('vo2Max'), text: value => value.toFixed(1), label: 'VO₂ max, latest', bars: spark(series('vo2Max', 30), { floor: 'auto' }) },
   ].filter(figure => figure.value != null);
   if (!figures.length) return '';
-  const items = figures.map(figure => `<div class="figure"><p class="figure-value">${figure.text(figure.value)}</p><p class="figure-label">${figure.label}</p>${figure.bars}</div>`).join('');
-  return section('health', 'Health', `<div class="figures">${items}</div><p class="note">Seven-day averages from Apple Health, through ${formatDate(latest, { day: 'numeric', month: 'long' })}. Bars show the last 30 days.</p>`);
+  const items = figures.map(figure => `<div class="figure"><p class="figure-value">${figure.text(figure.value)}</p><p class="figure-label">${figure.label}</p>${figure.detail ? `<p class="figure-label">${escape(figure.detail)}</p>` : ''}${figure.bars}</div>`).join('');
+  const through = formatDate(latest, { day: 'numeric', month: 'long' });
+  const note = week.length === 7 ? `Seven-day averages and totals from Apple Health, through ${through}.` : `Averages and totals over ${span} of Apple Health data so far, through ${through}.`;
+  return section('health', 'Health', `<div class="figures">${items}</div><p class="note">${note} Bars show the last 30 days.</p>`);
 }
 
 export function newsletter() {
