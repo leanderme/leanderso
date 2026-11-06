@@ -76,7 +76,7 @@ This token can push to the website repository, so it lives only on the phone: in
 
 ### 2. Install Health Push
 
-Follow `ios/README.md`: open `ios/HealthPush.xcodeproj`, run it on the iPhone, allow Health access, paste the token and send once to check. That's all; the steps below are only needed without the app.
+Follow `ios/README.md`: open `ios/HealthPush.xcodeproj`, run it on the iPhone, allow Health access, paste the token and send once to check. Then set up the daily Shortcuts automation described there, so the send happens at a fixed time every morning. That's all; the steps below are only needed without the app.
 
 ### Alternative: build a Shortcut
 

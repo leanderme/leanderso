@@ -18,6 +18,17 @@ Once a day, at the first opportunity after 09:00:
 
 iOS decides when background work actually runs and keeps Health data unreadable while the phone is locked, so on some days the summary goes out later, typically the next time you unlock the phone. "Send the last 30 days now" always sends immediately and replaces those days on the site.
 
+## A fixed daily send with Shortcuts
+
+Background sending depends on iOS. For a send at the same time every day, the app provides a **Send Health Summary** action:
+
+1. Shortcuts → Automation → New Automation.
+2. Pick **Alarm → Is Stopped** (your wake-up alarm) or **Time of Day** (for example 09:30, Daily).
+3. Choose **Run Immediately** and turn off **Notify When Run** if you don't want a banner.
+4. New Blank Automation → Add Action → search for "Send Health Summary" (from Health Push for leander.so) → Done.
+
+The action runs without opening the app and sends the last 30 days, like the button. It fails with a message if the phone is locked, because iOS keeps Health data unreadable until it is unlocked, so the alarm trigger is the more reliable of the two. Siri also understands "Send health summary with Health Push". Background sending stays on as a fallback and skips the day once the automation has sent; sending again is harmless, since unchanged days produce no commit.
+
 ## Install
 
 1. Create the fine-grained GitHub token described in `docs/live-data.md` (only `leanderme/leanderso`, Contents read and write).

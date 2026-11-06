@@ -64,8 +64,10 @@ final class Sender: ObservableObject {
         await send()
     }
 
-    func send() async {
-        guard !isSending else { return }
+    /// Returns the number of days sent, or nil when nothing was sent; `status` then says why.
+    @discardableResult
+    func send() async -> Int? {
+        guard !isSending else { status = "A send is already in progress."; return nil }
         isSending = true
         defer { isSending = false }
         do {
@@ -94,11 +96,13 @@ final class Sender: ObservableObject {
             defaults.set(HealthReader.dayFormatter.string(from: yesterday), forKey: "sentDay")
             defaults.set(lastSentAt, forKey: "lastSentAt")
             defaults.set(try JSONEncoder().encode(summary), forKey: "lastSummary")
+            return days.count
         } catch HKError.errorDatabaseInaccessible {
             status = "Apple Health is locked until the phone is unlocked. It will try again."
         } catch {
             status = (error as? Failure)?.message ?? error.localizedDescription
         }
+        return nil
     }
 
     /// HealthKit relaunches the app in the background when new steps or sleep arrive; each wake checks whether a send is due.
