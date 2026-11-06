@@ -19,7 +19,7 @@ iOS decides when background work actually runs and keeps Health data unreadable 
 ## Install
 
 1. Create the fine-grained GitHub token described in `docs/live-data.md` (only `leanderme/leanderso`, Contents read and write).
-2. Open `ios/HealthPush.xcodeproj` in Xcode. Under Signing & Capabilities, check the team. The project uses Leander Melms (`NNKW9K65CQ`). If that is a free personal team, the app stops launching after 7 days and needs reinstalling from Xcode; a paid membership signs it for a year.
+2. Open `ios/HealthPush.xcodeproj` in Xcode. Under Signing & Capabilities, check the team. The project uses the personal team of leander.melms@gmx.de (`68V5ZWC7U9`). If that is a free personal team, the app stops launching after 7 days and needs reinstalling from Xcode; a paid membership signs it for a year.
 3. Connect the iPhone, choose it as the run destination, select the Release configuration under Product → Scheme → Edit Scheme → Run, and run. Release builds hide the testing tools and don't ask for permission to write Health data.
 4. In the app: Allow Health access (turn on all five types), paste the token, Save, then "Send yesterday's summary now". The Actions tab should show a Health run, and `data/health.json` should get a commit.
 
