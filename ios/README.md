@@ -19,11 +19,23 @@ iOS decides when background work actually runs and keeps Health data unreadable 
 ## Install
 
 1. Create the fine-grained GitHub token described in `docs/live-data.md` (only `leanderme/leanderso`, Contents read and write).
-2. Open `ios/HealthPush.xcodeproj` in Xcode. Under Signing & Capabilities, check the team. The project uses the personal team of leander.melms@gmx.de (`68V5ZWC7U9`). If that is a free personal team, the app stops launching after 7 days and needs reinstalling from Xcode; a paid membership signs it for a year.
+2. Open `ios/HealthPush.xcodeproj` in Xcode. Under Signing & Capabilities, check the team. The project uses Leander Melms (`68V5ZWC7U9`), the paid Individual membership of leander.melms@gmx.de, so a build stays valid for a year and can go to TestFlight.
 3. Connect the iPhone, choose it as the run destination, select the Release configuration under Product → Scheme → Edit Scheme → Run, and run. Release builds hide the testing tools and don't ask for permission to write Health data.
 4. In the app: Allow Health access (turn on all five types), paste the token, Save, then "Send yesterday's summary now". The Actions tab should show a Health run, and `data/health.json` should get a commit.
 
 To change access later: Settings → Health → Data Access & Devices → Health Push. To stop sending, remove the token in the app or revoke it on GitHub.
+
+## TestFlight
+
+One-time setup in App Store Connect → Apps → New App: platform iOS, bundle ID `so.leander.healthpush`, any SKU (for example `healthpush`). The record exists as "Health Push for leander.so" (Apple ID 6831673523), with an internal TestFlight group "Leander" that receives new Xcode builds automatically. Internal testers need no beta review.
+
+Then, for every new build:
+
+```sh
+ios/testflight.sh
+```
+
+It archives a Release build with the current UTC time as build number and uploads it with the Apple ID signed into Xcode. App Store Connect usually needs 5 to 15 minutes to process a build before it shows up in the TestFlight app.
 
 ## Testing in the Simulator
 
