@@ -15,4 +15,23 @@ export const site = {
     { name: 'X', url: 'https://x.com/leanderbuilds', icon: '/icons/x.png' },
     { name: 'Threads', url: 'https://www.threads.com/@leander.builds', icon: '/icons/threads.webp' },
   ],
+  // Contributions are refreshed daily by .github/workflows/github-activity.yml into data/github.json.
+  github: { login: 'leanderme', url: 'https://github.com/leanderme' },
+  // Apple Health summaries arrive through .github/workflows/health.yml into data/health.json.
+  // The section hides itself when the newest day is older than this.
+  health: { staleAfterDays: 10 },
+  // Prepared, not yet shown. Add photos to public/now/ with alt text, then set enabled: true.
+  now: {
+    enabled: false,
+    place: 'Cyprus',
+    since: '',
+    note: '',
+    images: [
+      { src: '/now/1.jpg', alt: '', width: 1200, height: 1500 },
+      { src: '/now/2.jpg', alt: '', width: 1200, height: 1500 },
+      { src: '/now/3.jpg', alt: '', width: 1200, height: 1500 },
+    ],
+  },
+  // Prepared, not yet shown. A plain link to the newsletter's own page, so this site collects no addresses.
+  newsletter: { enabled: false, name: '', url: '', description: '' },
 };

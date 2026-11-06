@@ -40,4 +40,10 @@ No analytics, Speed Insights, log drains, middleware or runtime functions are co
 - No consumer-contract process, so generic [§36 VSBG](https://www.gesetze-im-internet.de/vsbg/__36.html) dispute-resolution boilerplate is not added.
 - No electronic commerce service concluding consumer contracts in the assessed scope: [BFSG §1](https://www.gesetze-im-internet.de/bfsg/__1.html), [§2(26)](https://www.gesetze-im-internet.de/bfsg/__2.html). Semantic HTML, responsive layout, focus outlines, readable text and reduced-motion support are nevertheless implemented.
 
+## Activity and health sections (added 6 November 2026)
+
+The homepage shows the operator's own GitHub contribution counts and daily Apple Health summaries (steps, sleep, resting heart rate, exercise). These are the operator's personal data, published at his own choice; health data is special category data under Art. 9 GDPR, and publication here is the data subject's own decision (cf. Art. 9(2)(e)). No visitor data is involved: the data is committed to the public repository by GitHub Actions and rendered into static HTML at build time, so pages still load no external resources and set no cookies. The privacy page needed only GitHub added to the list of plain external links.
+
+The prepared newsletter section is a plain outbound link. An embedded sign-up form, or any collection of addresses on this site, requires a new privacy assessment, a privacy page update, and a CSP `form-action` change. The prepared Now section uses self-hosted photos; recognisable people in them need consent (§ 22 KUG / GDPR).
+
 Reassess when adding editorial content, commercial offers, medical practice services, forms, analytics, tracking, embedded media, or new data-processing services.

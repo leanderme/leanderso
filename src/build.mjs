@@ -1,11 +1,13 @@
 import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { site } from './site.mjs';
+import { code, escape, health, newsletter, now } from './sections.mjs';
 
-const escape = (value) => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 const external = ({ name, url, icon }) => `<a class="index-link" href="${escape(url)}" rel="noreferrer"><span class="link-label">${icon ? `<img class="brand-icon" src="${escape(icon)}" width="20" height="20" alt="">` : ''}<span class="link-name">${escape(name)}</span></span><span class="link-arrow" aria-hidden="true">↗</span></a>`;
 const list = (links) => `<ul class="link-list">${links.map(link => `<li>${external(link)}</li>`).join('')}</ul>`;
 const address = `<address>${escape(site.name)}<br>${site.address.map(escape).join('<br>')}</address>`;
 const contact = `${site.email ? `<p>E-Mail: <a href="mailto:${escape(site.email)}">${escape(site.email)}</a></p>` : '<p>E-Mail: vor Veröffentlichung zu ergänzen.</p>'}${site.phone ? `<p>Telefon: <a href="tel:${escape(site.phone)}">${escape(site.phone)}</a></p>` : ''}`;
+const germanList = (items) => items.length > 1 ? `${items.slice(0, -1).join(', ')} und ${items.at(-1)}` : items.join('');
+const linked = ['Unternehmen', 'GitHub', ...site.socials.map(social => social.name), ...(site.newsletter.enabled ? [`den Newsletter ${site.newsletter.name}`] : [])];
 const footer = `<footer class="footer"><nav aria-label="Rechtliches" lang="de"><a href="/impressum/">Impressum</a><a href="/datenschutz/">Datenschutz</a></nav></footer>`;
 const masthead = `<header class="masthead"><a href="/">${escape(site.name)}</a><a class="back" href="/">← Startseite</a></header>`;
 
@@ -48,7 +50,8 @@ const pages = [
     description: 'Leander Melms. Hamburg, Germany. Theodor.ai, Tonihealth.de, and elsewhere on the internet.',
     body: `<header class="intro"><p class="location">${escape(site.city)}</p><h1>${escape(site.name)}</h1><p class="introduction">${escape(site.introduction)}</p></header>
       <div class="directory"><section class="index-section companies" aria-labelledby="companies"><h2 class="section-label" id="companies">Companies</h2>${list(site.companies)}</section>
-      <section class="index-section socials" aria-labelledby="elsewhere"><h2 class="section-label" id="elsewhere">Elsewhere</h2>${list(site.socials)}</section></div>`,
+      ${code()}${health()}
+      <section class="index-section socials" aria-labelledby="elsewhere"><h2 class="section-label" id="elsewhere">Elsewhere</h2>${list(site.socials)}</section>${newsletter()}</div>${now()}`,
   },
   {
     file: 'impressum/index.html', path: '/impressum/',
@@ -76,7 +79,7 @@ const pages = [
       <h2>Cookies und externe Inhalte</h2>
       <p>Diese Website setzt selbst keine Cookies und nutzt weder Webanalyse noch Werbetracking. Es gibt keine Social-Media-Einbettungen, extern geladenen Schriftarten oder Kontaktformulare. Die Seiten funktionieren ohne JavaScript. Eine Einwilligung für optionale Speicher- oder Zugriffsvorgänge nach § 25 TDDDG ist für diese Gestaltung nicht erforderlich.</p>
       <h2>Links zu anderen Websites</h2>
-      <p>Die Verweise auf Unternehmen, Instagram, X und Threads sind einfache Links. Erst wenn Sie einen Link aufrufen, wird eine Verbindung zum jeweiligen Angebot hergestellt. Für die dortige Datenverarbeitung gelten die Datenschutzhinweise des jeweiligen Anbieters.</p>
+      <p>Die Verweise auf ${escape(germanList(linked))} sind einfache Links. Erst wenn Sie einen Link aufrufen, wird eine Verbindung zum jeweiligen Angebot hergestellt. Für die dortige Datenverarbeitung gelten die Datenschutzhinweise des jeweiligen Anbieters.</p>
       <h2>Kontaktaufnahme</h2>
       <p>Wenn Sie mich kontaktieren, verarbeite ich Ihre Kontaktdaten und die von Ihnen übermittelten Inhalte zur Bearbeitung Ihrer Anfrage. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; das berechtigte Interesse ist die Beantwortung von Anfragen. Soweit die Verarbeitung zur Erfüllung eines Vertrags mit Ihnen oder zur Durchführung vorvertraglicher Maßnahmen auf Ihre Anfrage erforderlich ist, erfolgt sie auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO. Die Angaben sind freiwillig; ohne eine erreichbare Kontaktadresse kann ich gegebenenfalls nicht antworten.</p>
       <p>Für Empfang, Speicherung und Versand von E-Mails nutze ich GMX, einen Dienst der 1&amp;1 Mail &amp; Media GmbH, Brauerstraße 48, 76135 Karlsruhe, Deutschland. Dabei verarbeitet der Anbieter die zur E-Mail-Kommunikation erforderlichen Adress-, Inhalts- und Verbindungsdaten. Weitere Informationen enthalten die <a href="https://agb-server.gmx.net/datenschutz" rel="noreferrer">Datenschutzhinweise von GMX</a>.</p>

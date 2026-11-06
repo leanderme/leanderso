@@ -53,7 +53,7 @@ h1 { margin: 0 0 0 -.04em; font-family: var(--serif); font-size: clamp(3.25rem, 
 .link-list { list-style: none; padding: 0; margin: 0; }
 .index-link { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3rem; font-size: 1.125rem; letter-spacing: -.025em; line-height: 1.5; }
 .link-label { display: inline-flex; align-items: center; gap: .75rem; }
-.companies .link-name { font-family: var(--serif); font-size: 1.5rem; letter-spacing: -.015em; line-height: 1.25; }
+.companies .link-name, .code .link-name, .newsletter .link-name { font-family: var(--serif); font-size: 1.5rem; letter-spacing: -.015em; line-height: 1.25; }
 .brand-icon { display: block; width: 1.25rem; height: 1.25rem; flex: none; object-fit: contain; }
 .link-arrow { color: var(--muted); font-size: 1rem; font-weight: 400; transition: transform 160ms ease, color 160ms ease; }
 .index-link:hover .link-name { text-decoration-color: var(--muted); }
@@ -66,6 +66,27 @@ h1 { margin: 0 0 0 -.04em; font-family: var(--serif); font-size: clamp(3.25rem, 
 .socials .link-label { gap: .45rem; }
 .socials .brand-icon { width: 1rem; height: 1rem; }
 .socials .link-arrow { display: none; }
+.calendar { display: block; width: 100%; height: auto; margin-top: .75rem; }
+.calendar circle { fill: var(--line); }
+.calendar .l1, .calendar .l2, .calendar .l3, .calendar .l4 { fill: var(--ink); }
+.calendar .l1 { fill-opacity: .2; }
+.calendar .l2 { fill-opacity: .42; }
+.calendar .l3 { fill-opacity: .68; }
+.axis { display: flex; justify-content: space-between; margin: .5rem 0 0; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 2rem; padding-top: .625rem; }
+.figure { display: flex; flex-direction: column; }
+.figure-value { margin: 0; font-family: var(--serif); font-size: 1.5rem; letter-spacing: -.015em; line-height: 1.25; }
+.figure-label { margin: .125rem 0 .625rem; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.spark { display: block; width: 100%; margin-top: auto; height: 1.25rem; fill: var(--ink); fill-opacity: .3; }
+.note { margin: .75rem 0 0; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.health .note { margin-top: 1.25rem; }
+.newsletter .note { margin-top: 0; }
+.now { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.now h2 { margin: 0; font-family: var(--serif); font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 400; letter-spacing: -.025em; line-height: 1.15; }
+.now-since { margin: .375rem 0 0; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+.now-note { margin: .75rem 0 0; max-width: 32rem; color: var(--soft); line-height: 1.6; }
+.now-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin-top: 1.5rem; }
+.now-photos img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 2px; background: var(--line); }
 .footer { margin-top: 4rem; color: var(--muted); font-size: .75rem; line-height: 1.5; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
 .footer a { display: inline-flex; align-items: center; min-height: 2rem; }
@@ -95,6 +116,9 @@ h1 { margin: 0 0 0 -.04em; font-family: var(--serif); font-size: clamp(3.25rem, 
   .section-label { line-height: 1.5; }
   .index-section + .index-section { margin-top: 2rem; }
   .socials .link-list { column-gap: 1.25rem; }
+  .figures { column-gap: 1.5rem; }
+  .now { margin-top: 3rem; }
+  .now-photos { gap: .5rem; }
   .footer { margin-top: 3rem; }
   .legal { padding-block: 2.5rem; }
   .masthead { margin-bottom: 3rem; }
