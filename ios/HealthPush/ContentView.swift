@@ -48,6 +48,32 @@ struct ContentView: View {
             }
 
             Section {
+                if sender.coverage.isEmpty {
+                    Text("Not checked yet").foregroundStyle(.secondary)
+                } else {
+                    ForEach(DailySummary.metrics, id: \.label) { metric in
+                        let days = sender.coverage[metric.label] ?? 0
+                        LabeledContent(metric.label) {
+                            Text("\(days) of \(Sender.daysToSend) days").foregroundStyle(days == 0 ? .orange : .secondary)
+                        }
+                    }
+                }
+                Button {
+                    Task { await sender.checkData() }
+                } label: {
+                    HStack {
+                        Text("Check Apple Health now")
+                        if sender.isChecking { Spacer(); ProgressView() }
+                    }
+                }
+                .disabled(sender.isChecking || !healthRequested)
+            } header: {
+                Text("Found in Apple Health")
+            } footer: {
+                Text("Days with data in the last \(Sender.daysToSend). Workouts counts days with at least one workout. A metric at 0 is usually switched off in Settings → Health → Data Access & Devices → Health Push, or your Watch didn't record it.")
+            }
+
+            Section {
                 Button(healthRequested ? "Health access requested" : "Allow Health access") {
                     Task {
                         do {

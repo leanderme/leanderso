@@ -15,6 +15,9 @@ final class Sender: ObservableObject {
     @Published private(set) var lastSentAt: Date?
     @Published private(set) var status: String?
     @Published private(set) var isSending = false
+    /// Days with data per metric label in the last `daysToSend` days, from the most recent check or send.
+    @Published private(set) var coverage: [String: Int] = [:]
+    @Published private(set) var isChecking = false
 
     private let defaults = UserDefaults.standard
     private var observing = false
@@ -28,6 +31,26 @@ final class Sender: ObservableObject {
     private init() {
         lastSentAt = defaults.object(forKey: "lastSentAt") as? Date
         if let data = defaults.data(forKey: "lastSummary") { lastSummary = try? JSONDecoder().decode(DailySummary.self, from: data) }
+        coverage = defaults.dictionary(forKey: "coverage") as? [String: Int] ?? [:]
+    }
+
+    /// Reads the last `daysToSend` days without sending, to show which metrics Apple Health returns.
+    func checkData() async {
+        guard !isChecking else { return }
+        isChecking = true
+        defer { isChecking = false }
+        do {
+            record(try await HealthReader.shared.summaries(days: Self.daysToSend))
+        } catch HKError.errorDatabaseInaccessible {
+            status = "Apple Health is locked until the phone is unlocked."
+        } catch {
+            status = error.localizedDescription
+        }
+    }
+
+    private func record(_ summaries: [DailySummary]) {
+        coverage = Dictionary(uniqueKeysWithValues: DailySummary.metrics.map { metric in (metric.label, summaries.filter(metric.has).count) })
+        defaults.set(coverage, forKey: "coverage")
     }
 
     private var yesterday: Date { Calendar.current.date(byAdding: .day, value: -1, to: .now)! }
@@ -47,7 +70,9 @@ final class Sender: ObservableObject {
         defer { isSending = false }
         do {
             guard let token = Keychain.token else { throw Failure("Add a GitHub token first.") }
-            let days = try await HealthReader.shared.summaries(days: Self.daysToSend).filter { !$0.isEmpty }
+            let summaries = try await HealthReader.shared.summaries(days: Self.daysToSend)
+            record(summaries)
+            let days = summaries.filter { !$0.isEmpty }
             guard let summary = days.last else { throw Failure("Apple Health has no figures for the last \(Self.daysToSend) days.") }
 
             var request = URLRequest(url: Self.dispatchURL)

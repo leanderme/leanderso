@@ -6,6 +6,8 @@ A one-screen iPhone app that sends daily Apple Health summaries for the last 30 
 
 Daily totals for the last 30 complete days, every time: steps, walking and running distance, active energy, exercise minutes, workouts (count and minutes per type), resting heart rate, heart rate variability and VO₂ max, plus minutes asleep for the night that ended the following morning (18:00 to 12:00, asleep stages only). It uses one HealthKit statistics collection per metric, so iPhone and Apple Watch samples are not counted twice, and it merges overlapping sleep samples from different sources. Figures with no data are left out. Sending 30 days each time fills any gaps and corrects days the Watch synced late; the payload is about 5 KB.
 
+"Found in Apple Health" lists, for each metric, how many of the last 30 days had data, refreshed on every send or with "Check Apple Health now". iOS returns nothing, rather than an error, for a type you didn't allow, so a metric at 0 days usually means its switch is off in Settings → Health → Data Access & Devices.
+
 ## When it sends
 
 Once a day, at the first opportunity after 09:00:

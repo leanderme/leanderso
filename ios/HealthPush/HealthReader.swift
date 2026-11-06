@@ -20,6 +20,21 @@ struct DailySummary: Codable, Equatable {
     }
 }
 
+extension DailySummary {
+    /// The metrics shown in the app's "Found in Apple Health" list, with how to tell whether a day has data for each.
+    static let metrics: [(label: String, has: (DailySummary) -> Bool)] = [
+        ("Steps", { $0.steps != nil }),
+        ("Distance", { $0.distanceMeters != nil }),
+        ("Active energy", { $0.activeEnergy != nil }),
+        ("Exercise minutes", { $0.exerciseMinutes != nil }),
+        ("Workouts", { ($0.workouts ?? 0) > 0 }),
+        ("Sleep", { $0.sleepMinutes != nil }),
+        ("Resting heart rate", { $0.restingHeartRate != nil }),
+        ("Heart rate variability", { $0.hrv != nil }),
+        ("VO₂ max", { $0.vo2Max != nil }),
+    ]
+}
+
 final class HealthReader {
     static let shared = HealthReader()
     let store = HKHealthStore()
