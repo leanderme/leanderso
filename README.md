@@ -17,6 +17,7 @@ Open http://127.0.0.1:4173. Run `npm run build` after an edit to refresh the sta
 - `src/site.mjs`: name, address, contact information, company and social links, and the prepared Now and newsletter sections.
 - `src/build.mjs`: shared HTML layout, page copy, metadata, and static build.
 - `src/sections.mjs`: homepage sections built from data (GitHub activity, health) and the optional Now and newsletter sections.
+- `ios/`: Health Push, the iPhone app that sends the daily Apple Health summary. See `ios/README.md`.
 - `data/`: GitHub and Apple Health figures, committed by GitHub Actions. See `docs/live-data.md` for how they update and how to enable the prepared sections.
 - `public/style.css`: responsive layout, typography, colors, focus and hover states.
 - `public/fonts/`: self-hosted Newsreader font and its SIL Open Font License.

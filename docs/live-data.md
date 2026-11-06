@@ -5,7 +5,7 @@ The homepage stays a static site. Data is committed to `data/` by GitHub Actions
 | Section | Source | How it updates | File |
 | --- | --- | --- | --- |
 | Code | GitHub contribution calendar | `.github/workflows/github-activity.yml`, daily at 04:23 UTC | `data/github.json` |
-| Health | Apple Health on Leander's iPhone | iOS Shortcut → `.github/workflows/health.yml` | `data/health.json` |
+| Health | Apple Health on Leander's iPhone | Health Push app (`ios/`) or an iOS Shortcut → `.github/workflows/health.yml` | `data/health.json` |
 
 Both workflows commit as `leanderme` with the GitHub noreply address, so Vercel deploys their commits like any other push. They share a concurrency group, so they never push at the same time.
 
@@ -21,7 +21,7 @@ GITHUB_TOKEN=$(gh auth token) node scripts/fetch-github.mjs
 
 ## Apple Health
 
-Apple Health has no web API, so the iPhone sends yesterday's figures once a day. The Shortcut posts a `repository_dispatch` event, and `scripts/record-health.mjs` checks every value against a plausible range before storing it. Only daily totals are kept, for the last 120 days.
+Apple Health has no web API, so the iPhone sends yesterday's figures once a day. The recommended sender is the Health Push app in `ios/` (see `ios/README.md`): it reads Health directly with deduplicated totals and sends in the background. An iOS Shortcut is described below as a fallback. Either one posts a `repository_dispatch` event, and `scripts/record-health.mjs` checks every value against a plausible range before storing it. Only daily totals are kept, for the last 120 days.
 
 The Health section appears once there is data and hides itself when the newest day is more than 10 days old (`site.health.staleAfterDays`), so a broken Shortcut never leaves stale figures on the page.
 
@@ -51,9 +51,13 @@ On GitHub: Settings → Developer settings → Fine-grained tokens → Generate 
 - Permissions: Contents, read and write (GitHub requires this for repository dispatch events)
 - Expiration: up to one year; set a reminder to renew it
 
-This token can push to the website repository, so it lives only inside the Shortcut. If the phone is lost, revoke the token on GitHub.
+This token can push to the website repository, so it lives only on the phone: in the Health Push app's Keychain, or inside the Shortcut. If the phone is lost, revoke the token on GitHub.
 
-### 2. Build the Shortcut
+### 2. Install Health Push
+
+Follow `ios/README.md`: open `ios/HealthPush.xcodeproj`, run it on the iPhone, allow Health access, paste the token and send once to check. That's all; the steps below are only needed without the app.
+
+### Alternative: build a Shortcut
 
 In the Shortcuts app, create a shortcut named "Send health summary". Health actions and their options differ a little between iOS versions, so treat these steps as the recipe and check the numbers before automating it:
 
@@ -72,13 +76,15 @@ In the Shortcuts app, create a shortcut named "Send health summary". Health acti
 
 Before automating it, run the Shortcut once. Compare each number with yesterday's figures in the Health app; if steps come out about twice as high, iPhone and Watch samples were added together, so keep "group by Day" on. Then check the Actions tab for a successful Health run and a new commit to `data/health.json`.
 
-### 3. Automate it
+#### Automate the Shortcut
 
 Shortcuts → Automation → New → **Alarm: Is Stopped** (your wake-up alarm), set to Run Immediately, running "Send health summary". iOS protects Health data while the phone is locked, so a fixed time-of-day trigger at night often reads nothing. Stopping the alarm usually happens with the phone in hand.
 
 Sending the same day twice simply replaces that day's figures.
 
 ### Test without the phone
+
+The app can be tested in the Simulator against a local server; see `ios/README.md`. To exercise the real workflow:
 
 ```sh
 gh api repos/leanderme/leanderso/dispatches -f event_type=health -f 'client_payload[date]=2026-11-05' -F 'client_payload[steps]=8432' -F 'client_payload[sleepMinutes]=431'

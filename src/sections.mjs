@@ -55,7 +55,7 @@ export function health(today = new Date().toISOString().slice(0, 10)) {
     { value: sleep, text: () => `${Math.floor(Math.round(sleep) / 60)}:${String(Math.round(sleep) % 60).padStart(2, '0')}`, label: 'hours of sleep a night', bars: spark(series('sleepMinutes', 30)) },
     { value: average('restingHeartRate'), text: number, label: 'bpm resting heart rate', bars: spark(series('restingHeartRate', 30), { floor: 'auto' }) },
     sum('workouts') != null
-      ? { value: sum('workouts'), text: number, label: `workouts this week${sum('exerciseMinutes') ? `, ${number(sum('exerciseMinutes'))} active minutes` : ''}`, bars: spark(series('exerciseMinutes', 30)) }
+      ? { value: sum('workouts'), text: number, label: `workout${sum('workouts') === 1 ? '' : 's'} this week${sum('exerciseMinutes') ? `, ${number(sum('exerciseMinutes'))} active minutes` : ''}`, bars: spark(series('exerciseMinutes', 30)) }
       : { value: sum('exerciseMinutes'), text: number, label: 'active minutes this week', bars: spark(series('exerciseMinutes', 30)) },
   ].filter(figure => figure.value != null);
   if (!figures.length) return '';

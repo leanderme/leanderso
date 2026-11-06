@@ -3,3 +3,7 @@ dist/
 .vercel/
 .DS_Store
 .env*
+
+# Xcode
+xcuserdata/
+*.xcuserstate
