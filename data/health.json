@@ -30,5 +30,6 @@
 {"date":"2026-11-04","steps":7444,"distanceMeters":5767,"activeEnergy":957,"exerciseMinutes":71,"workouts":1,"workoutMinutes":{"cycling":43}},
 {"date":"2026-11-05","steps":7535,"distanceMeters":6499,"activeEnergy":3,"exerciseMinutes":1,"workouts":0},
 {"date":"2026-11-06","steps":6615,"distanceMeters":5406,"activeEnergy":607,"exerciseMinutes":46,"workouts":1,"workoutMinutes":{"cycling":26}},
-{"date":"2026-11-07","steps":9567,"distanceMeters":7617,"activeEnergy":860,"exerciseMinutes":53,"workouts":1,"workoutMinutes":{"cycling":14}}
+{"date":"2026-11-07","steps":9567,"distanceMeters":7617,"activeEnergy":860,"exerciseMinutes":53,"workouts":1,"workoutMinutes":{"cycling":14}},
+{"date":"2026-11-08","steps":9904,"distanceMeters":7970,"activeEnergy":959,"exerciseMinutes":61,"workouts":2,"workoutMinutes":{"cycling":31}}
 ]}
