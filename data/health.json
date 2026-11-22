@@ -43,5 +43,6 @@
 {"date":"2026-11-17","steps":8383,"distanceMeters":6427,"activeEnergy":717,"exerciseMinutes":66,"workouts":1,"workoutMinutes":{"cycling":26}},
 {"date":"2026-11-18","steps":10175,"distanceMeters":8137,"activeEnergy":945,"exerciseMinutes":69,"workouts":0},
 {"date":"2026-11-19","steps":8220,"distanceMeters":6281,"workouts":0},
-{"date":"2026-11-20","steps":10043,"distanceMeters":7381,"workouts":0}
+{"date":"2026-11-20","steps":10043,"distanceMeters":7381,"workouts":0},
+{"date":"2026-11-21","steps":9994,"distanceMeters":7311,"workouts":0}
 ]}
